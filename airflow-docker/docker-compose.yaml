@@ -1,10 +1,7 @@
-version: "3.7"
-
 services:
   airflow-webserver:
     image: apache/airflow:2.6.0
     environment:
-      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
@@ -15,14 +12,14 @@ services:
     ports:
       - "8080:8080"
     command: >
-      bash -c "airflow db init &&
+      bash -c "export AIRFLOW__CORE__EXECUTOR=SequentialExecutor &&
+      airflow db init &&
       airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin &&
-      airflow webserver"
+      exec airflow webserver"
   
   airflow-scheduler:
     image: apache/airflow:2.6.0
     environment:
-      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
       - AIRFLOW__CORE__LOAD_EXAMPLES=False
     volumes:
@@ -30,7 +27,7 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - airflow_db:/opt/airflow
-    command: airflow scheduler
+    command: bash -c "export AIRFLOW__CORE__EXECUTOR=SequentialExecutor && exec airflow scheduler"
 
 volumes:
   airflow_db:
