@@ -11,12 +11,17 @@ services:
       - airflow_db:/opt/airflow
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "airflow", "db", "check"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
     command: >
       bash -c "export AIRFLOW__CORE__EXECUTOR=SequentialExecutor &&
-      airflow db init &&
-      airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin &&
-      exec airflow webserver"
-  
+        airflow db init &&
+        airflow users create --username admin --firstname Admin --lastname User --role Admin --email admin@example.com --password admin &&
+        exec airflow webserver"
+
   airflow-scheduler:
     image: apache/airflow:2.6.0
     environment:
@@ -27,6 +32,9 @@ services:
       - ./logs:/opt/airflow/logs
       - ./plugins:/opt/airflow/plugins
       - airflow_db:/opt/airflow
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
     command: bash -c "export AIRFLOW__CORE__EXECUTOR=SequentialExecutor && exec airflow scheduler"
 
 volumes:
