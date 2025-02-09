@@ -4,6 +4,7 @@ import requests
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
 
 st.title("Entraînement sur le dataset Diabetes avec MLflow et Airflow")
 
@@ -15,9 +16,25 @@ if st.button("Entraîner directement le modèle"):
     # Charger le dataset
     diabetes = load_diabetes()
     X_train, X_test, y_train, y_test = train_test_split(
-        diabetes.data, diabetes.target, test_size=0.2, random_state=42
-    )
+        diabetes.data, diabetes.target, test_size=0.2, random_state=42)
     
+    # Afficher un aperçu du dataset
+    st.subheader("Aperçu du dataset Diabetes")
+    st.dataframe(diabetes.head())
+
+    # Afficher des statistiques descriptives
+    st.subheader("Statistiques descriptives")
+    st.write(diabetes.describe())
+
+    # Afficher un graphique de distribution de la cible
+    st.subheader("Distribution de la cible (Diabètes progression)")
+    fig, ax = plt.subplots()
+    ax.hist(df['target'], bins=30, color='skyblue', edgecolor='black')
+    ax.set_xlabel("Diabètes progression")
+    ax.set_ylabel("Fréquence")
+    st.pyplot(fig)
+
+
     # Configurer et démarrer l'expérience MLflow
     mlflow.set_experiment("diabetes_regression")
     with mlflow.start_run():
