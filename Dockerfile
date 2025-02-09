@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py /app/
 
+RUN chown -R nonroot:nonroot /app
+
 USER nonroot
 
 EXPOSE 8501
