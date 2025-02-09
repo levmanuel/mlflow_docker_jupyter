@@ -1,5 +1,7 @@
 FROM python:3.9-slim
 
+RUN groupadd -r nonroot && useradd -r -g nonroot -m nonroot
+
 WORKDIR /app
 
 COPY requirements.txt ./
