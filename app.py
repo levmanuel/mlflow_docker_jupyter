@@ -62,16 +62,20 @@ if st.button("🚀 Entraîner directement le modèle"):
             st.write("Les paramètres et métriques ont été enregistrés dans MLflow.")
 
 # Bouton pour déclencher le DAG Airflow
-st.subheader("Orchestration avec Airflow")
-if st.button("🌀 Déclencher l'exécution du DAG Airflow"):
-    with st.spinner("Tentative de déclenchement du DAG Airflow..."):
-        # URL de l'API REST d'Airflow pour lancer un DAG (ici 'diabetes_training')
-        airflow_url = "http://localhost:8080/api/v1/dags/diabetes_training/dagRuns"
-        try:
-            response = requests.post(airflow_url, json={"conf": {}})
-            if response.status_code in [200, 201]:
-                st.success("✅ Le DAG Airflow a été déclenché avec succès !")
-            else:
-                st.error(f"❌ Erreur lors du déclenchement du DAG Airflow : {response.text}")
-        except Exception as e:
-            st.error(f"❌ Erreur de connexion à Airflow : {e}")
+if st.button("Déclencher l'exécution du DAG Airflow"):
+    st.info("Tentative de déclenchement du DAG Airflow...")
+    # URL de l'API REST d'Airflow pour lancer un DAG (ici 'diabetes_training')
+    airflow_url = "http://localhost:8080/api/v1/dags/diabetes_training/dagRuns"
+    try:
+        response = requests.post(
+            airflow_url,
+            json={"conf": {}},
+            auth=("admin", "admin"),  # Ajout de l'authentification basique
+            headers={"Content-Type": "application/json"}
+        )
+        if response.status_code in [200, 201]:
+            st.success("Le DAG Airflow a été déclenché avec succès !")
+        else:
+            st.error(f"Erreur lors du déclenchement du DAG Airflow : {response.text}")
+    except Exception as e:
+        st.error(f"Erreur de connexion à Airflow : {e}")
