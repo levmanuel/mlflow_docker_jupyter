@@ -65,7 +65,7 @@ if st.button("🚀 Entraîner directement le modèle"):
 if st.button("Déclencher l'exécution du DAG Airflow"):
     st.info("Tentative de déclenchement du DAG Airflow...")
     # URL de l'API REST d'Airflow pour lancer un DAG (ici 'diabetes_training')
-    airflow_url = "http://localhost:8080/api/v1/dags/diabetes_training/dagRuns"
+    airflow_url = "http://airflow-webserver:8080/api/v1/dags/diabetes_training/dagRuns"
     try:
         response = requests.post(
             airflow_url,

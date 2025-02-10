@@ -1,4 +1,13 @@
 services:
+  streamlit:
+    build: .
+    ports:
+      - "8501:8501"
+    networks:
+      - airflow-net
+    depends_on:
+      - airflow-webserver
+
   airflow-webserver:
     image: apache/airflow:2.6.0
     environment:
@@ -42,6 +51,9 @@ services:
       airflow-webserver:
         condition: service_healthy
     command: bash -c "export AIRFLOW__CORE__EXECUTOR=SequentialExecutor && exec airflow scheduler"
+
+networks:
+  airflow-net:
 
 volumes:
   airflow_db:
