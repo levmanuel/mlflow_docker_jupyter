@@ -1,18 +1,30 @@
+# Utiliser une image Python officielle
 FROM python:3.9-slim
 
-RUN groupadd -r nonroot && useradd -r -g nonroot -m nonroot
+# Définir les variables d'environnement
+ENV PYTHONUNBUFFERED 1
+ENV MLFLOW_PORT 5000
+ENV JUPYTER_PORT 8888
 
+# Mettre à jour et installer les dépendances système
+RUN apt-get update && apt-get install -y \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Créer et définir le répertoire de travail
 WORKDIR /app
 
-COPY requirements.txt ./
+# Copier les requirements
+COPY requirements.txt .
+
+# Installer les dépendances Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py /app/
+# Copier les fichiers du projet
+COPY . .
 
-RUN chown -R nonroot:nonroot /app
+# Exposer les ports pour Jupyter et MLflow
+EXPOSE ${JUPYTER_PORT} ${MLFLOW_PORT}
 
-USER nonroot
-
-EXPOSE 8501
-
-CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.enableCORS=true"]
+# Commande de démarrage
+CMD ["sh", "-c", "mlflow server --host 0.0.0.0 --port $MLFLOW_PORT --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./mlruns & jupyter lab --ip=0.0.0.0 --port=$JUPYTER_PORT --no-browser --allow-root --NotebookApp.token=''"]

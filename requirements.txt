@@ -1,7 +1,6 @@
-streamlit
-scikit-learn
-matplotlib
+jupyterlab
 mlflow
-requests
+scikit-learn
 pandas
-apache-airflow==2.6.0
+numpy
+matplotlib

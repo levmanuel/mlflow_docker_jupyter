@@ -1,6 +1,5 @@
 import streamlit as st
 import mlflow
-import requests
 from sklearn.datasets import load_diabetes
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -60,22 +59,3 @@ if st.button("🚀 Entraîner directement le modèle"):
             
             st.success(f"✅ Entraînement terminé ! Score du modèle : {score:.3f}")
             st.write("Les paramètres et métriques ont été enregistrés dans MLflow.")
-
-# Bouton pour déclencher le DAG Airflow
-if st.button("Déclencher l'exécution du DAG Airflow"):
-    st.info("Tentative de déclenchement du DAG Airflow...")
-    # URL de l'API REST d'Airflow pour lancer un DAG (ici 'diabetes_training')
-    airflow_url = "http://airflow-webserver:8080/api/v1/dags/diabetes_training/dagRuns"
-    try:
-        response = requests.post(
-            airflow_url,
-            json={"conf": {}},
-            auth=("admin", "admin"),  # Ajout de l'authentification basique
-            headers={"Content-Type": "application/json"}
-        )
-        if response.status_code in [200, 201]:
-            st.success("Le DAG Airflow a été déclenché avec succès !")
-        else:
-            st.error(f"Erreur lors du déclenchement du DAG Airflow : {response.text}")
-    except Exception as e:
-        st.error(f"Erreur de connexion à Airflow : {e}")
