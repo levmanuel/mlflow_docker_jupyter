@@ -2,9 +2,9 @@
 FROM python:3.9-slim
 
 # Définir les variables d'environnement
-ENV PYTHONUNBUFFERED 1
-ENV MLFLOW_PORT 5000
-ENV JUPYTER_PORT 8888
+ENV PYTHONUNBUFFERED=1
+ENV MLFLOW_PORT=5000
+ENV JUPYTER_PORT=8888
 
 # Mettre à jour et installer les dépendances système
 RUN apt-get update && apt-get install -y \
